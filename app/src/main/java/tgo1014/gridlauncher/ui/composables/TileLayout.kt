@@ -61,6 +61,7 @@ import tgo1014.gridlauncher.ui.theme.modifyIf
 import tgo1014.gridlauncher.ui.theme.plus
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.foundation.layout.size
+import android.util.Log
 
 
 @OptIn(ExperimentalHazeMaterialsApi::class)
@@ -163,6 +164,7 @@ fun TileLayout(
         detectTapGestures(onLongPress = { offset ->
             val gx = kotlin.math.floor(offset.x / gridItemSizePx).toInt().coerceAtLeast(0)
             val gy = kotlin.math.floor(offset.y / gridItemSizePx).toInt().coerceAtLeast(0)
+            Log.d("TileLayout", "Background long-press at gx=$gx gy=$gy")
             val occupied = grid.any { item ->
                 val x1 = item.x
                 val y1 = item.y

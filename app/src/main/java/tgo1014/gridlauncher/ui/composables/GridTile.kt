@@ -39,6 +39,7 @@ import tgo1014.gridlauncher.ui.theme.flipRandomly
 import tgo1014.gridlauncher.ui.theme.isPreview
 import tgo1014.gridlauncher.ui.theme.modifyIf
 import tgo1014.gridlauncher.ui.theme.tileEditMode
+import android.util.Log
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -72,15 +73,18 @@ fun GridTile(
                         totalDragX = 0f; totalDragY = 0f
                         // haptic feedback on drag start
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        Log.d("GridTile", "onDragStart id=${item.id} pos=${it}")
                         onDragStart(item.id)
                     },
                     onDrag = { change, dragAmount ->
+                        Log.d("GridTile", "onDrag id=${item.id} dragAmount=${dragAmount}")
                         change.consume()
                         totalDragX += dragAmount.x
                         totalDragY += dragAmount.y
                         onDrag(item.id, totalDragX, totalDragY)
                     },
                     onDragEnd = {
+                        Log.d("GridTile", "onDragEnd id=${item.id} totalX=${totalDragX} totalY=${totalDragY}")
                         // haptic feedback on drag end
                         haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                         onDragEnd(item.id, totalDragX, totalDragY)

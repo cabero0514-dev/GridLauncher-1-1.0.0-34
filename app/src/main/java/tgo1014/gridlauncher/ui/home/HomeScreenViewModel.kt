@@ -152,6 +152,7 @@ class HomeScreenViewModel @Inject constructor(
             isWidget = true,
             widgetProvider = null
         )
+        android.util.Log.d("HomeVM", "onAddWidgetRequested: inserting placeholder widget id=${placeholder.id}")
         addWidgetToGridUseCase(placeholder)
     }
 
