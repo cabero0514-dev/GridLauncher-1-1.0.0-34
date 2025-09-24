@@ -60,7 +60,6 @@ import tgo1014.gridlauncher.ui.models.GridItem
 import tgo1014.gridlauncher.ui.theme.modifyIf
 import tgo1014.gridlauncher.ui.theme.plus
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.foundation.layout.matchParentSize
 import androidx.compose.foundation.layout.size
 
 
