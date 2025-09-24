@@ -29,7 +29,6 @@ import kotlin.math.roundToInt
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.Canvas
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.Modifier as UiModifier
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.draw.drawBehind
@@ -59,6 +58,9 @@ import tgo1014.gridlauncher.domain.usecases.wallpaper.AppHazeStyle
 import tgo1014.gridlauncher.ui.models.GridItem
 import tgo1014.gridlauncher.ui.theme.modifyIf
 import tgo1014.gridlauncher.ui.theme.plus
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.foundation.layout.matchParentSize
+import androidx.compose.foundation.layout.size
 
 
 @OptIn(ExperimentalHazeMaterialsApi::class)
@@ -83,8 +85,8 @@ fun TileLayout(
     val padding = 4.dp
     val gridItemSize = (this.maxWidth - (padding * 2)) / columns
     var firstItemPosition: Float? by remember { mutableStateOf(null) }
-    LaunchedIfTrueEffect(grid.isEmpty()) {
-        isOnTop(true)
+    LaunchedEffect(grid.isEmpty()) {
+        if (grid.isEmpty()) isOnTop(true)
     }
 
     // Draw drag preview above the grid with animated offset
@@ -197,7 +199,7 @@ fun TileLayout(
                     onItemClicked = onItemClicked,
                     onItemLongClicked = onItemLongClicked,
                     onDragStart = { id -> onItemDragStart(id) },
-                    onItemDrag = { id, totalDragX, totalDragY ->
+                    onDrag = { id, totalDragX, totalDragY ->
                             val dxCells = kotlin.math.roundToInt(totalDragX / gridItemSizePx)
                             val dyCells = kotlin.math.roundToInt(totalDragY / gridItemSizePx)
                             val newX = (it.x + dxCells).coerceAtLeast(0)
