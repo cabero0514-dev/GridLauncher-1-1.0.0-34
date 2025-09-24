@@ -1,0 +1,65 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+      
+    - name: Run gradle tests
+      run: ./gradlew test
+
+    - name: Build apk debug project (APK)
+      run: ./gradlew assembleRelease
+
+    - name: Get Apk Version
+      id: apk
+      uses: JantHsueh/get-apk-info-action@1.0
+      with:
+        apkPath: app/build/outputs/apk/release/app-release.apk
+
+    - name: Tag the repository
+      id: tag
+      uses: thejeff77/action-push-tag@v1.0.0
+      with:
+        tag: '${{ steps.apk.outputs.versionCode }}-${{ steps.apk.outputs.versionNum }}-${{github.run_number}}'
+
+    - name: Upload Build to Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: 'gridlauncher-${{ steps.apk.outputs.versionCode }}-${{ steps.apk.outputs.versionNum }}-${{github.run_number}}.apk'
+        path: app/build/outputs/apk/release/app-release.apk
+
+    - name: Create Github Release
+      uses: softprops/action-gh-release@v1
+      with:
+        generate_release_notes: true
+        prerelease: true
+        tag_name: '${{ steps.apk.outputs.versionCode }}-${{ steps.apk.outputs.versionNum }}-${{github.run_number}}'
+        files: |
+          app/build/outputs/apk/release/app-release.apk
+   
