@@ -81,7 +81,20 @@ fun TileLayout(
     onItemDrag: (itemId: Int, totalDragX: Float, totalDragY: Float) -> Unit = { _, _, _ -> },
     onItemDragEnd: (itemId: Int, newX: Int, newY: Int) -> Unit = { _, _, _ -> },
     footer: @Composable (Modifier) -> Unit = {},
-) = BoxWithConstraints(modifier = modifier) {
+    // Attach a pointer input at the BoxWithConstraints level to detect background long-presses
+)= BoxWithConstraints(modifier = modifier.pointerInput(Unit) {
+        detectTapGestures(onLongPress = { offset ->
+            val gx = kotlin.math.floor(offset.x / with(LocalDensity.current) { gridItemSize.toPx() }).toInt().coerceAtLeast(0)
+            val gy = kotlin.math.floor(offset.y / with(LocalDensity.current) { gridItemSize.toPx() }).toInt().coerceAtLeast(0)
+            val occupied = grid.any { item ->
+                val x1 = item.x
+                val y1 = item.y
+                val x2 = item.x + item.width - 1
+                val y2 = item.y + item.height - 1
+                gx in x1..x2 && gy in y1..y2
+            }
+            if (!occupied) onBackgroundLongPress(gx, gy)
+        }) {
     val padding = 4.dp
     val gridItemSize = (this.maxWidth - (padding * 2)) / columns
     var firstItemPosition: Float? by remember { mutableStateOf(null) }
@@ -156,6 +169,9 @@ fun TileLayout(
     val density = LocalDensity.current
     val gridItemSizePx = with(density) { gridItemSize.toPx() }
 
+    // background long-press handled at the BoxWithConstraints level (see modifier above)
+
+    // pointer modifier for background long press on the grid area
     val pointerModifier = Modifier.pointerInput(Unit) {
         detectTapGestures(onLongPress = { offset ->
             val gx = kotlin.math.floor(offset.x / gridItemSizePx).toInt().coerceAtLeast(0)

@@ -66,10 +66,6 @@ fun GridTile(
             }
             .tileEditMode(isEditMode)
             .clip(shape)
-            .combinedClickable(
-                onClick = { onItemClicked(item) },
-                onLongClick = { onItemLongClicked(item) }
-            )
             .pointerInput(item.id) {
                 detectDragGestures(
                     onDragStart = {
@@ -94,6 +90,10 @@ fun GridTile(
                     }
                 )
             }
+            .combinedClickable(
+                onClick = { onItemClicked(item) },
+                onLongClick = { onItemLongClicked(item) }
+            )
             .then(modifier)
     ) {
         if (!tileSettings.isTransparencyEnabled) {
