@@ -22,6 +22,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.input.pointer.pointerInput
@@ -137,7 +138,7 @@ fun TileLayout(
     // ...existing code...
     // Grid lines overlay
     if (tileSettings.showGridLines) {
-        Canvas(modifier = Modifier.matchParentSize()) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
             val cols = columns
             val maxRow = (grid.maxOfOrNull { it.y + it.height } ?: 0) + 1
             val cellW = size.width / cols
@@ -200,8 +201,8 @@ fun TileLayout(
                     onItemLongClicked = onItemLongClicked,
                     onDragStart = { id -> onItemDragStart(id) },
                     onDrag = { id, totalDragX, totalDragY ->
-                            val dxCells = kotlin.math.roundToInt(totalDragX / gridItemSizePx)
-                            val dyCells = kotlin.math.roundToInt(totalDragY / gridItemSizePx)
+                            val dxCells = (totalDragX / gridItemSizePx).roundToInt()
+                            val dyCells = (totalDragY / gridItemSizePx).roundToInt()
                             val newX = (it.x + dxCells).coerceAtLeast(0)
                             val newY = (it.y + dyCells).coerceAtLeast(0)
                             // set logical preview cell position
@@ -216,8 +217,8 @@ fun TileLayout(
                             onItemDrag(id, totalDragX, totalDragY)
                         },
                         onDragEnd = { itemId, totalDragX, totalDragY ->
-                            val dxCells = kotlin.math.roundToInt(totalDragX / gridItemSizePx)
-                            val dyCells = kotlin.math.roundToInt(totalDragY / gridItemSizePx)
+                            val dxCells = (totalDragX / gridItemSizePx).roundToInt()
+                            val dyCells = (totalDragY / gridItemSizePx).roundToInt()
                             val newX = (it.x + dxCells).coerceAtLeast(0)
                             val newY = (it.y + dyCells).coerceAtLeast(0)
                             // snap animation to final cell then commit

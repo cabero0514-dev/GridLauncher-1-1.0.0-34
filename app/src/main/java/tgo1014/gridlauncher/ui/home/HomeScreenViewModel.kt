@@ -157,12 +157,10 @@ class HomeScreenViewModel @Inject constructor(
 
     fun onTileEvent(event: TileEvent) = viewModelScope.launch {
         // For drag end events we may get an explicit itemId and coordinates.
-        when (event) {
-            is TileEvent.OnTileDragEnd -> {
-                moveGridItemToPositionUseCase(event.itemId, event.x, event.y)
-                _stateFlow.update { it.copy(itemBeingEdited = null) }
-                return@launch
-            }
+        if (event is TileEvent.OnTileDragEnd) {
+            moveGridItemToPositionUseCase(event.itemId, event.x, event.y)
+            _stateFlow.update { it.copy(itemBeingEdited = null) }
+            return@launch
         }
         val item = _stateFlow.value.itemBeingEdited ?: return@launch
         when (event) {
